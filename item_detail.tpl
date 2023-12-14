@@ -1,3 +1,4 @@
+
 <!-- item_details.tpl -->
 <!DOCTYPE html>
 <html>
