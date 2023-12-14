@@ -2,17 +2,17 @@
 
 import sqlite3
 
-connection = sqlite3.connect("book_store.db")
+connection = sqlite3.connect("stationary.db")
 
 def initialize_database():
     cursor = connection.cursor()
     try:
-        cursor.execute("DROP TABLE IF EXISTS Books")
+        cursor.execute("DROP TABLE IF EXISTS Stationary")
     except:
         pass
 
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS Books (
+    CREATE TABLE IF NOT EXISTS Stationary (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
         author TEXT,
@@ -20,53 +20,45 @@ def initialize_database():
     )
     ''')
 
-    book_categories = {
-        'Stationary': [
-            {'title': 'Notebook', 'author': 'Various Authors', 'genre': 'Stationary'},
-            {'title': 'Pen Set', 'author': 'Pen Manufacturers', 'genre': 'Stationary'},
-        ],
-        'Items': [
-            {'title': 'Backpack', 'author': 'Bag Designers', 'genre': 'Items'},
-            {'title': 'Calendar', 'author': 'Date Keepers', 'genre': 'Items'},
-        ]
-    }
-
-    for category, books in book_categories.items():
-        for book in books:
-            cursor.execute(f"INSERT INTO Books (title, author, genre) VALUES "
-                           f"('{book['title']}', '{book['author']}', '{book['genre']}')")
+    for item in [
+        {'title': 'Notebook', 'author': 'Stationary Co.', 'genre': 'Office Supplies'},
+        {'title': 'Pen Set', 'author': 'Pen Manufacturing', 'genre': 'Writing Tools'},
+        {'title': 'Sticky Notes', 'author': 'Stationary Co.', 'genre': 'Office Supplies'},
+    ]:
+        cursor.execute(f"INSERT INTO Stationary (title, author, genre) VALUES "
+                       f"('{item['title']}', '{item['author']}', '{item['genre']}')")
 
     connection.commit()
 
-def get_all_books():
+def get_all_items():
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM Books")
+    cursor.execute("SELECT * FROM Stationary")
     columns = [column[0] for column in cursor.description]
-    books = [dict(zip(columns, row)) for row in cursor.fetchall()]
-    return books
+    items = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    return items
 
-def add_book(title, author, genre):
+def add_item(title, author, genre):
     cursor = connection.cursor()
-    cursor.execute(f"INSERT INTO Books (title, author, genre) VALUES "
+    cursor.execute(f"INSERT INTO Stationary (title, author, genre) VALUES "
                    f"('{title}', '{author}', '{genre}')")
     connection.commit()
 
-def get_book_details(book_id):
+def get_item_details(item_id):
     cursor = connection.cursor()
-    cursor.execute(f"SELECT * FROM Books WHERE id = {book_id}")
+    cursor.execute(f"SELECT * FROM Stationary WHERE id = {item_id}")
     columns = [column[0] for column in cursor.description]
-    book = dict(zip(columns, cursor.fetchone()))
-    return book
+    item = dict(zip(columns, cursor.fetchone()))
+    return item
 
-def update_book(book_id, title, author, genre):
+def update_item(item_id, title, author, genre):
     cursor = connection.cursor()
-    cursor.execute(f"UPDATE Books SET title = '{title}', author = '{author}', genre = '{genre}' "
-                   f"WHERE id = {book_id}")
+    cursor.execute(f"UPDATE Stationary SET title = '{title}', author = '{author}', genre = '{genre}' "
+                   f"WHERE id = {item_id}")
     connection.commit()
 
-def delete_book(book_id):
+def delete_item(item_id):
     cursor = connection.cursor()
-    cursor.execute(f"DELETE FROM Books WHERE id = {book_id}")
+    cursor.execute(f"DELETE FROM Stationary WHERE id = {item_id}")
     connection.commit()
 
 if __name__ == "__main__":
